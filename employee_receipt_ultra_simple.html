@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Receipt Entry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .output-box {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.98);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #bankAmountGroup {
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            background: #f0f4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Quick Receipt Entry</h1>
+        <p class="subtitle">Enter your receipt details below</p>
+
+        <div id="errorMessage" class="error hidden"></div>
+
+        <div class="form-group">
+            <label>Your Name <span class="required">*</span></label>
+            <select id="employee">
+                <option value="">Select your name</option>
+                <option value="Crystal">Crystal</option>
+                <option value="Jagat">Jagat</option>
+                <option value="Marissa">Marissa</option>
+                <option value="Zubi">Zubi</option>
+                <option value="Josiah">Josiah</option>
+                <option value="Adrienne">Adrienne</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Register <span class="required">*</span></label>
+            <select id="register">
+                <option value="">Select register</option>
+                <option value="1">Register 1</option>
+                <option value="2">Register 2</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Time <span class="required">*</span></label>
+            <input type="time" id="time">
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-group">
+                <input type="checkbox" id="startingBank">
+                <span>Starting Bank Declared ($100)</span>
+            </label>
+        </div>
+
+        <div class="form-group hidden" id="bankAmountGroup">
+            <label>Starting Bank Amount <span class="required">*</span></label>
+            <input type="number" step="0.01" id="bankAmount" value="100.00">
+        </div>
+
+        <div class="form-group">
+            <label>Declared Cash <span class="required">*</span></label>
+            <input type="number" step="0.01" id="declaredCash" placeholder="0.00">
+        </div>
+
+        <div class="form-group">
+            <label>Over/Short <span class="required">*</span></label>
+            <input type="number" step="0.01" id="overShort" placeholder="0.00">
+        </div>
+
+        <div class="form-group">
+            <label>CC Tips <span class="required">*</span></label>
+            <input type="number" step="0.01" id="ccTips" placeholder="0.00">
+        </div>
+
+        <div class="form-group">
+            <label>Cash Deposited <span class="required">*</span></label>
+            <input type="number" step="0.01" id="cashDeposited" placeholder="0.00">
+        </div>
+
+        <div class="form-group">
+            <label>Notes (optional)</label>
+            <input type="text" id="notes" placeholder="Any issues or comments...">
+        </div>
+
+        <button class="btn btn-primary" id="generateBtn">📤 Generate Text Message</button>
+
+        <div id="outputContainer" class="hidden">
+            <div id="output" class="output-box"></div>
+            <button class="copy-btn" id="copyBtn">📋 Copy to Clipboard</button>
+        </div>
+
+        <div id="successMessage" class="success-message hidden"></div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+            
+            // Get elements
+            var startingBankCheckbox = document.getElementById('startingBank');
+            var bankAmountGroup = document.getElementById('bankAmountGroup');
+            var generateBtn = document.getElementById('generateBtn');
+            var copyBtn = document.getElementById('copyBtn');
+            var outputContainer = document.getElementById('outputContainer');
+            var output = document.getElementById('output');
+            var errorMessage = document.getElementById('errorMessage');
+            var successMessage = document.getElementById('successMessage');
+
+            // Set current time on load
+            var now = new Date();
+            var hours = String(now.getHours()).padStart(2, '0');
+            var minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').value = hours + ':' + minutes;
+
+            // Toggle bank amount visibility
+            startingBankCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    bankAmountGroup.classList.remove('hidden');
+                } else {
+                    bankAmountGroup.classList.add('hidden');
+                }
+            });
+
+            // Generate message
+            generateBtn.addEventListener('click', function() {
+                // Hide previous messages
+                errorMessage.classList.add('hidden');
+                successMessage.classList.add('hidden');
+
+                // Get values
+                var employee = document.getElementById('employee').value;
+                var register = document.getElementById('register').value;
+                var time = document.getElementById('time').value;
+                var startingBank = startingBankCheckbox.checked;
+                var bankAmount = document.getElementById('bankAmount').value;
+                var declaredCash = document.getElementById('declaredCash').value;
+                var overShort = document.getElementById('overShort').value;
+                var ccTips = document.getElementById('ccTips').value;
+                var cashDeposited = document.getElementById('cashDeposited').value;
+                var notes = document.getElementById('notes').value;
+
+                // Validate
+                if (!employee) {
+                    showError('Please select your name');
+                    return;
+                }
+                if (!register) {
+                    showError('Please select a register');
+                    return;
+                }
+                if (!time) {
+                    showError('Please enter the time');
+                    return;
+                }
+                if (!declaredCash) {
+                    showError('Please enter declared cash');
+                    return;
+                }
+                if (!overShort && overShort !== '0') {
+                    showError('Please enter over/short amount');
+                    return;
+                }
+                if (!ccTips && ccTips !== '0') {
+                    showError('Please enter CC tips');
+                    return;
+                }
+                if (!cashDeposited && cashDeposited !== '0') {
+                    showError('Please enter cash deposited');
+                    return;
+                }
+                if (startingBank && !bankAmount) {
+                    showError('Please enter starting bank amount');
+                    return;
+                }
+
+                // Get today's date
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = String(today.getMonth() + 1).padStart(2, '0');
+                var day = String(today.getDate()).padStart(2, '0');
+                var dateString = year + '-' + month + '-' + day;
+
+                // Build message
+                var message = 'Receipt - ' + dateString + '\n';
+                message += 'Employee: ' + employee + '\n';
+                message += 'Register: ' + register + '\n';
+                message += 'Time: ' + time + '\n';
+                message += 'Starting Bank: ' + (startingBank ? 'Yes $' + bankAmount : 'No') + '\n';
+                message += 'Declared Cash: $' + declaredCash + '\n';
+                message += 'Over/Short: $' + overShort + '\n';
+                message += 'CC Tips: $' + ccTips + '\n';
+                message += 'Deposited: $' + cashDeposited;
+                
+                if (notes && notes.trim()) {
+                    message += '\nNotes: ' + notes;
+                }
+
+                // Display
+                output.textContent = message;
+                outputContainer.classList.remove('hidden');
+                
+                // Scroll to output
+                outputContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+
+            // Copy to clipboard
+            copyBtn.addEventListener('click', function() {
+                var text = output.textContent;
+
+                // Try modern clipboard API
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        showSuccess('✅ Copied! Paste into text message');
+                    }).catch(function() {
+                        fallbackCopy(text);
+                    });
+                } else {
+                    fallbackCopy(text);
+                }
+            });
+
+            function fallbackCopy(text) {
+                var textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.top = '0';
+                textarea.style.left = '0';
+                textarea.style.width = '1px';
+                textarea.style.height = '1px';
+                textarea.style.padding = '0';
+                textarea.style.border = 'none';
+                textarea.style.outline = 'none';
+                textarea.style.boxShadow = 'none';
+                textarea.style.background = 'transparent';
+                
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    showSuccess('✅ Copied! Paste into text message');
+                } catch (err) {
+                    showSuccess('⚠️ Please manually copy the text above');
+                }
+                
+                document.body.removeChild(textarea);
+            }
+
+            function showError(msg) {
+                errorMessage.textContent = '❌ ' + msg;
+                errorMessage.classList.remove('hidden');
+                errorMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function showSuccess(msg) {
+                successMessage.textContent = msg;
+                successMessage.classList.remove('hidden');
+                
+                setTimeout(function() {
+                    successMessage.classList.add('hidden');
+                }, 4000);
+            }
+        })();
+    </script>
+</body>
+</html>
